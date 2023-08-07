@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
 
 const client = new Client({
@@ -16,15 +17,17 @@ const client = new Client({
     ] 
 });
 
-const regexSteamLink = /steam:\/\/joinlobby\/\d+\/\d+\/\d+/;
+const discordToken = process.env.DISCORD_TOKEN;
+const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty)\b.*\b(?:Terry|Bogard|terry|bogard)\b/i;
 const tinyUrlBase = 'http://tinyurl.com/api-create.php?url=';
+const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
     console.log(getNowFormat() + "\tTerry connected");
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(discordToken);
 
 client.on("messageCreate", async function(message) {
 
@@ -35,9 +38,16 @@ client.on("messageCreate", async function(message) {
     const matchThanks = message.content.match(regexThanks);
 
     if (matchSteamLink) {
+        const gameID = matchSteamLink[1];
+        const gameData = steamAppList.find((data) => data.appid === parseInt(gameID));
+
+        let gameName = "404";
+        if (gameData) {
+            gameName = `${gameData.name}`;
+        }
 
         const serverName = message.guild ? message.guild.name : 'DM';
-        const authorName = message.author.displayName;
+        const authorName = await getAuthorName(message);
         let tinyUrl = await shortenUrl(matchSteamLink[0]);
 
         const embed = new EmbedBuilder()
@@ -47,7 +57,7 @@ client.on("messageCreate", async function(message) {
         message.channel.send({ embeds: [embed] });
         
         // log message
-        console.log(`${getNowFormat()} \t ${serverName} \t ${matchSteamLink[0]}`);
+        console.log(`${getNowFormat()} \t ${serverName} \t ${gameName} \t ${matchSteamLink[0]}`);
     }
 
     if (matchThanks) {
@@ -73,6 +83,15 @@ async function getAuthorColor(message) {
         return member.displayColor;
     }
     return "Default";
+}
+
+async function getAuthorName(message) {
+    if (message.guild) {
+        const member = await message.guild.members.fetch(message.author);
+
+        return member.displayName;
+    }
+    return message.author.displayName;
 }
 
 function getNowFormat() {
