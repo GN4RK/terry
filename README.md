@@ -8,7 +8,11 @@ to messages, such as handling Steam lobby links and reacting to thank-you messag
 - Automatically detects and responds to Steam lobby links with tinyurl links.
 - Reacts with ❤️ to thank-you messages.
 
-## Getting Started
+## Adding Terry to your server
+
+You can add Terry to your server by clicking this invite link : https://discord.com/api/oauth2/authorize?client_id=746064350456053825&permissions=0&scope=bot
+
+## Hosting your own version of the bot
 
 ### Prerequisites
 
