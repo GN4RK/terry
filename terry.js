@@ -1,7 +1,8 @@
-import { Client, GatewayIntentBits, EmbedBuilder, Partials } from 'discord.js';
+import {Client, GatewayIntentBits, EmbedBuilder, Partials} from 'discord.js';
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import fs from "fs";
+
 dotenv.config();
 
 const client = new Client({
@@ -20,7 +21,7 @@ const client = new Client({
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty)\b.*\b(?:Terry|Bogard|terry|bogard)\b/i;
-const tinyUrlBase = 'http://tinyurl.com/api-create.php?url=';
+const tinyUrlBase = 'https://tinyurl.com/api-create.php?url=';
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -61,7 +62,7 @@ client.on("messageCreate", async function(message) {
     }
 
     if (matchThanks) {
-        message.react('❤️');
+        await message.react('❤️');
     }
     
 });
@@ -79,7 +80,6 @@ async function shortenUrl(url) {
 async function getAuthorColor(message) {
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
-        
         return member.displayColor;
     }
     return "Default";
@@ -88,7 +88,6 @@ async function getAuthorColor(message) {
 async function getAuthorName(message) {
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
-
         return member.displayName;
     }
     return message.author.displayName;
@@ -117,6 +116,5 @@ function getNowFormat() {
     second = ('0' + second).slice(-2);
     // To make sure the second always has 2-character-format
 
-    const time = `${year}/${month}/${date} ${hour}:${minute}:${second}`;
-    return time;
+    return `${year}/${month}/${date} ${hour}:${minute}:${second}`;
 }
