@@ -1,11 +1,11 @@
 # Terry
 
-Terry Bot is a Discord bot designed to perform specific actions in response 
+Terry is a Discord bot designed to perform specific actions in response 
 to messages, such as handling Steam lobby links and reacting to thank-you messages.
 
 ## Features
 
-- Automatically detects and responds to Steam lobby links with tinyurl link
+- Automatically detects and responds to Steam lobby links with tinyurl links.
 - Reacts with ❤️ to thank-you messages.
 
 ## Getting Started
