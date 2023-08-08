@@ -80,7 +80,6 @@ async function shortenUrl(url) {
 async function getAuthorColor(message) {
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
-        
         return member.displayColor;
     }
     return "Default";
@@ -89,7 +88,6 @@ async function getAuthorColor(message) {
 async function getAuthorName(message) {
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
-
         return member.displayName;
     }
     return message.author.displayName;
