@@ -12,7 +12,11 @@ to messages, such as handling Steam lobby links and reacting to thank-you messag
 
 You can add Terry to your server by clicking this invite link : https://discord.com/api/oauth2/authorize?client_id=746064350456053825&permissions=19520&scope=bot
 
-The bot needs embed permission to work.
+The bot needs those permissions to work :
+- Read Messages/View Channels
+- Send Messages
+- Embed Links
+- Add Reactions
 
 ## Hosting your own version of the bot
 
