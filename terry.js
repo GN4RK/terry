@@ -20,7 +20,7 @@ const client = new Client({
 
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
-const regexThanks = /\b(?:thanks?|thank\syou|ty)\b.*\b(?:Terry|Bogard|terry|bogard)\b/i;
+const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm)\b.*\b(?:Terry|Bogard)\b/i;
 const tinyUrlBase = 'https://tinyurl.com/api-create.php?url=';
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
@@ -50,10 +50,11 @@ client.on("messageCreate", async function(message) {
         const serverName = message.guild ? message.guild.name : 'DM';
         const authorName = await getAuthorName(message);
         let tinyUrl = await shortenUrl(matchSteamLink[0]);
+        const titleEmbed = getTitleEmbled(authorName);
 
         const embed = new EmbedBuilder()
             .setColor(await getAuthorColor(message))
-            .setTitle(`${authorName}'s lobby`)
+            .setTitle(titleEmbed)
             .setDescription(tinyUrl);
         message.channel.send({ embeds: [embed] });
         
@@ -91,6 +92,13 @@ async function getAuthorName(message) {
         return member.displayName;
     }
     return message.author.displayName;
+}
+
+function getTitleEmbled(authorName) {
+    if (authorName.endsWith('s')) {
+        return `${authorName}' lobby`;
+    }
+    return `${authorName}'s lobby`;
 }
 
 function getNowFormat() {
