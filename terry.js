@@ -20,7 +20,7 @@ const client = new Client({
 
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
-const regexThanks = /\b(?:thanks?|thank\syou|ty)\b.*\b(?:Terry|Bogard|terry|bogard)\b/i;
+const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm)\b.*\b(?:Terry|Bogard)\b/i;
 const tinyUrlBase = 'https://tinyurl.com/api-create.php?url=';
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
