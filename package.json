@@ -1,6 +1,6 @@
 {
   "name": "terry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "discord bot for joinlobby link with steam",
   "main": "terry.js",
   "scripts": {
