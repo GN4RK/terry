@@ -55,7 +55,9 @@ client.on("messageCreate", async function(message) {
         const embed = new EmbedBuilder()
             .setColor(await getAuthorColor(message))
             .setTitle(titleEmbed)
-            .setDescription(tinyUrl);
+            .addFields(
+                { name : tinyUrl, value : matchSteamLink[0] }
+            );
 
         // checking channel's permissions
         if (message.guild) {
@@ -80,7 +82,7 @@ client.on("messageCreate", async function(message) {
         
         
         // log message
-        console.log(`${getNowFormat()} ${serverName} \t ${gameName} \t ${matchSteamLink[0]}`);
+        console.log(`${getNowFormat()} ${serverName} -> ${message.channel.name} \t ${gameName} \t ${matchSteamLink[0]}`);
     }
 
     if (matchThanks) {
