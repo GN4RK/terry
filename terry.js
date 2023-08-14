@@ -1,4 +1,4 @@
-import {Client, GatewayIntentBits, EmbedBuilder, Partials} from 'discord.js';
+import {Client, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField} from 'discord.js';
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import fs from "fs";
@@ -25,7 +25,7 @@ const tinyUrlBase = 'https://tinyurl.com/api-create.php?url=';
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
-    console.log(getNowFormat() + "\tTerry connected");
+    console.log(getNowFormat() + " Terry connected");
 });
 
 client.login(discordToken);
@@ -56,14 +56,50 @@ client.on("messageCreate", async function(message) {
             .setColor(await getAuthorColor(message))
             .setTitle(titleEmbed)
             .setDescription(tinyUrl);
+
+        // checking channel's permissions
+        if (message.guild) {
+            const botPermissions = (await message.guild.members.fetchMe()).permissionsIn(message.channel);
+            if (!botPermissions.has(PermissionsBitField.Flags.SendMessages)) {
+                console.error(
+                    `${getNowFormat()} Bot does not have 'Send Messages' permission on ` + 
+                    `${serverName} in ${message.channel.name}`
+                );
+                return;
+            }
+            if (!botPermissions.has(PermissionsBitField.Flags.EmbedLinks)) {
+                console.error(
+                    `${getNowFormat()} Bot does not have 'Embed Links' permission on ` + 
+                    `'${serverName}' in ${message.channel.name} channel`
+                );
+                return;
+            }
+        }
+            
         message.channel.send({ embeds: [embed] });
         
+        
         // log message
-        console.log(`${getNowFormat()} \t ${serverName} \t ${gameName} \t ${matchSteamLink[0]}`);
+        console.log(`${getNowFormat()} ${serverName} \t ${gameName} \t ${matchSteamLink[0]}`);
     }
 
     if (matchThanks) {
-        await message.react('❤️');
+        const serverName = message.guild ? message.guild.name : 'DM';
+        if (message.guild) {
+            // checking bot's permission to add reactions
+            if ((await message.guild.members.fetchMe()).permissionsIn(message.channel).has(PermissionsBitField.Flags.AddReactions)) {
+                await message.react('❤️');
+            } else {
+                console.error(
+                    `${getNowFormat()} Bot does not have 'Add Reaction' permission on ` + 
+                    `${serverName} in ${message.channel.name}`
+                );
+            }
+            
+        } else {
+            await message.react('❤️');
+        }
+        console.log(`${getNowFormat()} ${message.author.displayName} from ${serverName} thanks the bot`);
     }
     
 });
