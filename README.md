@@ -5,7 +5,7 @@ to messages, such as handling Steam lobby links and reacting to thank-you messag
 
 ## Features
 
-- Automatically detects and responds to Steam lobby links with tinyurl links.
+- Automatically detects and responds to Steam lobby links with short links.
 - Reacts with ❤️ to thank-you messages.
 
 ## Adding Terry to your server
@@ -34,12 +34,26 @@ The bot needs embed permission to work.
    npm install
    ```
    
-3. Create a .env file in the project root and add your Discord Bot Token:
+3. Create a .env file in the project root and add your Discord Bot Token and the API you'll use to shorten the URL (tinyurl in the example):
    ```
    DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
+   URL_SHORTENER_API_CALL='https://tinyurl.com/api-create.php?url='
    ```
 
-4. Run the bot:
+4. Adapt shortenUrl function in the code to work with the API you call. If you use tinyurl, this code should work:
+   ```JS
+      async function shortenUrl(url) {
+         try {
+            const response = await fetch(tinyUrlBase + encodeURIComponent(url));
+            return await response.text();
+         } catch (error) {
+            console.error('Error:', error);
+            return 'Failed to shorten URL';
+         }
+      }
+   ```
+
+5. Run the bot:
    ```bash
    node terry.js
    ```
