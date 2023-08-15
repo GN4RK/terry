@@ -21,7 +21,7 @@ const client = new Client({
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm)\b.*\b(?:Terry|Bogard)\b/i;
-const tinyUrlBase = 'https://tinyurl.com/api-create.php?url=';
+const URLshortenerAPICall = process.env.URL_SHORTENER_API_CALL;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -108,8 +108,10 @@ client.on("messageCreate", async function(message) {
 
 async function shortenUrl(url) {
     try {
-        const response = await fetch(tinyUrlBase + encodeURIComponent(url));
-        return await response.text();
+        const response = await fetch(URLshortenerAPICall + encodeURIComponent(url));
+        const json = await response.json();
+        return await json.shorturl;
+        
     } catch (error) {
         console.error('Error:', error);
         return 'Failed to shorten URL';
