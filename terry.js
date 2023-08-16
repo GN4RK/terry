@@ -32,6 +32,8 @@ client.login(discordToken);
 
 client.on("messageCreate", async function(message) {
 
+    const serverName = message.guild ? message.guild.name : 'DM';
+
     // preventing infinite loop
     if (message.author.bot) return;
 
@@ -86,22 +88,17 @@ client.on("messageCreate", async function(message) {
     }
 
     if (matchThanks) {
-        const serverName = message.guild ? message.guild.name : 'DM';
-        if (message.guild) {
-            // checking bot's permission to add reactions
-            if ((await message.guild.members.fetchMe()).permissionsIn(message.channel).has(PermissionsBitField.Flags.AddReactions)) {
-                await message.react('❤️');
-            } else {
-                console.error(
-                    `${getNowFormat()} Bot does not have 'Add Reaction' permission on ` + 
-                    `${serverName} in ${message.channel.name}`
-                );
-            }
-            
-        } else {
-            await message.react('❤️');
-        }
+        await reactWithHeart(message);        
         console.log(`${getNowFormat()} ${message.author.displayName} from ${serverName} thanks the bot`);
+    }
+
+    // react to stickers
+    if (message.stickers.size > 0) {
+        const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
+        if (terrySticker) {
+            await reactWithHeart(message);
+            console.log(`${getNowFormat()} ${message.author.displayName} from ${serverName} sent a Terry <3 sticker`);
+        }
     }
     
 });
@@ -139,6 +136,24 @@ function getTitleEmbled(authorName) {
         return `${authorName}' lobby`;
     }
     return `${authorName}'s lobby`;
+}
+
+async function reactWithHeart(message) {
+    const serverName = message.guild ? message.guild.name : 'DM';
+
+    if (message.guild) {
+        // checking bot's permission to add reactions
+        if ((await message.guild.members.fetchMe()).permissionsIn(message.channel).has(PermissionsBitField.Flags.AddReactions)) {
+            await message.react('❤️');
+        } else {
+            console.error(
+                `${getNowFormat()} Bot does not have 'Add Reaction' permission on ` + 
+                `${serverName} in ${message.channel.name}`
+            );
+        }
+    } else {
+        await message.react('❤️');
+    }
 }
 
 function getNowFormat() {
