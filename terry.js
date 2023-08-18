@@ -33,6 +33,8 @@ client.login(discordToken);
 client.on("messageCreate", async function(message) {
 
     const serverName = message.guild ? message.guild.name : 'DM';
+    const channelName = message.channel.name ? message.channel.name : 'DM';
+    const authorName = await getAuthorName(message);
 
     // preventing infinite loop
     if (message.author.bot) return;
@@ -49,8 +51,6 @@ client.on("messageCreate", async function(message) {
             gameName = `${gameData.name}`;
         }
 
-        const serverName = message.guild ? message.guild.name : 'DM';
-        const authorName = await getAuthorName(message);
         let tinyUrl = await shortenUrl(matchSteamLink[0]);
         const titleEmbed = getTitleEmbled(authorName);
 
@@ -67,14 +67,14 @@ client.on("messageCreate", async function(message) {
             if (!botPermissions.has(PermissionsBitField.Flags.SendMessages)) {
                 console.error(
                     `${getNowFormat()} Bot does not have 'Send Messages' permission on ` + 
-                    `${serverName} in ${message.channel.name}`
+                    `${serverName} in ${channelName}`
                 );
                 return;
             }
             if (!botPermissions.has(PermissionsBitField.Flags.EmbedLinks)) {
                 console.error(
                     `${getNowFormat()} Bot does not have 'Embed Links' permission on ` + 
-                    `'${serverName}' in ${message.channel.name} channel`
+                    `'${serverName}' in ${channelName} channel`
                 );
                 return;
             }
@@ -82,14 +82,13 @@ client.on("messageCreate", async function(message) {
             
         message.channel.send({ embeds: [embed] });
         
-        
         // log message
-        console.log(`${getNowFormat()} ${serverName} -> ${message.channel.name} \t ${gameName} \t ${matchSteamLink[0]}`);
+        console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} \t ${gameName} \t ${matchSteamLink[0]}`);
     }
 
     if (matchThanks) {
         await reactWithHeart(message);        
-        console.log(`${getNowFormat()} ${message.author.displayName} from ${serverName} thanks the bot`);
+        console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} thanks the bot`);
     }
 
     // react to stickers
@@ -97,7 +96,7 @@ client.on("messageCreate", async function(message) {
         const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
         if (terrySticker) {
             await reactWithHeart(message);
-            console.log(`${getNowFormat()} ${message.author.displayName} from ${serverName} sent a Terry <3 sticker`);
+            console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} sent a Terry <3 sticker`);
         }
     }
     
