@@ -20,7 +20,7 @@ const client = new Client({
 
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
-const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm)\b.*\b(?:Terry|Bogard)\b/i;
+const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
 const URLshortenerAPICall = process.env.URL_SHORTENER_API_CALL;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
