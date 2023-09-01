@@ -151,8 +151,6 @@ function getTitleEmbled(authorName)
 
 async function reactWithHeart(message)
 {
-    const serverName = message.guild ? message.guild.name : 'DM';
-
     if (message.guild) {
         // checking bot's permission to add reactions
         const addReactionsPermission = { "AddReactions": PermissionsBitField.Flags.AddReactions };
