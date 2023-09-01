@@ -32,6 +32,7 @@ client.login(discordToken);
 
 client.on("messageCreate", async function(message) {
 
+    // fetching infos
     const serverName = message.guild ? message.guild.name : 'DM';
     const channelName = message.channel.name ? message.channel.name : 'DM';
     const authorName = await getAuthorName(message);
@@ -39,43 +40,31 @@ client.on("messageCreate", async function(message) {
     // preventing infinite loop
     if (message.author.bot) return;
 
+    // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
     const matchThanks = message.content.match(regexThanks);
+    const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
     if (matchSteamLink) {
+        const permissionsNeeded = {
+            "SendMessages"  : PermissionsBitField.Flags.SendMessages,
+            "EmbedLinks"    : PermissionsBitField.Flags.EmbedLinks
+        };
         const gameID = matchSteamLink[1];
         const gameData = steamAppList.find((data) => data.appid === parseInt(gameID));
-
-        let gameName = "404";
-        if (gameData) {
-            gameName = `${gameData.name}`;
-        }
-
-        let tinyUrl = await shortenUrl(matchSteamLink[0]);
+        const gameName = gameData ? gameData.name : "404";
+        const shortUrl = await shortenUrl(matchSteamLink[0]);
         const titleEmbed = getTitleEmbled(authorName);
-
         const embed = new EmbedBuilder()
             .setColor(await getAuthorColor(message))
             .setTitle(titleEmbed)
             .addFields(
-                { name : tinyUrl, value : matchSteamLink[0] }
+                { name : shortUrl, value : matchSteamLink[0] }
             );
 
         // checking channel's permissions
         if (message.guild) {
-            const botPermissions = (await message.guild.members.fetchMe()).permissionsIn(message.channel);
-            if (!botPermissions.has(PermissionsBitField.Flags.SendMessages)) {
-                console.error(
-                    `${getNowFormat()} Bot does not have 'Send Messages' permission on ` + 
-                    `${serverName} in ${channelName}`
-                );
-                return;
-            }
-            if (!botPermissions.has(PermissionsBitField.Flags.EmbedLinks)) {
-                console.error(
-                    `${getNowFormat()} Bot does not have 'Embed Links' permission on ` + 
-                    `'${serverName}' in ${channelName} channel`
-                );
+            if (!(await checkBotPermissions(message.channel, permissionsNeeded))) {
                 return;
             }
         }
@@ -87,22 +76,42 @@ client.on("messageCreate", async function(message) {
     }
 
     if (matchThanks) {
-        await reactWithHeart(message);        
-        console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} thanks the bot`);
+        if (await reactWithHeart(message)) {
+            console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} thanks the bot`);
+        }
     }
 
     // react to stickers
     if (message.stickers.size > 0) {
-        const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
         if (terrySticker) {
-            await reactWithHeart(message);
-            console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} sent a Terry <3 sticker`);
+            if (await reactWithHeart(message)) {
+                console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} sent a Terry <3 sticker`);
+            }
         }
     }
     
 });
 
-async function shortenUrl(url) {
+async function checkBotPermissions(channel, requiredPermissions)
+{
+    const botMember = await channel.guild.members.fetchMe();
+    const botPermissions = botMember.permissionsIn(channel);
+
+
+    for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
+        if (!botPermissions.has(permissionCode)) {
+            console.error(
+                `${getNowFormat()} Bot does not have '${permissionName}' permission on ` +
+                `${channel.guild.name} in ${channel.name}`
+            );
+            return false;
+        }
+    }
+    return true;
+}
+
+async function shortenUrl(url)
+{
     try {
         const response = await fetch(URLshortenerAPICall + encodeURIComponent(url));
         const json = await response.json();
@@ -114,7 +123,8 @@ async function shortenUrl(url) {
     }
 }
 
-async function getAuthorColor(message) {
+async function getAuthorColor(message)
+{
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
         return member.displayColor;
@@ -122,7 +132,8 @@ async function getAuthorColor(message) {
     return "Default";
 }
 
-async function getAuthorName(message) {
+async function getAuthorName(message)
+{
     if (message.guild) {
         const member = await message.guild.members.fetch(message.author);
         return member.displayName;
@@ -130,32 +141,34 @@ async function getAuthorName(message) {
     return message.author.displayName;
 }
 
-function getTitleEmbled(authorName) {
+function getTitleEmbled(authorName)
+{
     if (authorName.endsWith('s')) {
         return `${authorName}' lobby`;
     }
     return `${authorName}'s lobby`;
 }
 
-async function reactWithHeart(message) {
+async function reactWithHeart(message)
+{
     const serverName = message.guild ? message.guild.name : 'DM';
 
     if (message.guild) {
         // checking bot's permission to add reactions
-        if ((await message.guild.members.fetchMe()).permissionsIn(message.channel).has(PermissionsBitField.Flags.AddReactions)) {
-            await message.react('❤️');
-        } else {
-            console.error(
-                `${getNowFormat()} Bot does not have 'Add Reaction' permission on ` + 
-                `${serverName} in ${message.channel.name}`
-            );
+        const addReactionsPermission = { "AddReactions": PermissionsBitField.Flags.AddReactions };
+        if (!(await checkBotPermissions(message.channel, addReactionsPermission))) {
+            return false;
         }
+        await message.react('❤️');
+
     } else {
         await message.react('❤️');
     }
+    return true;
 }
 
-function getNowFormat() {
+function getNowFormat()
+{
     const dateObj = new Date();
     let year = dateObj.getFullYear();
     let month = dateObj.getMonth();
