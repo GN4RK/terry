@@ -1,7 +1,6 @@
-import {Client, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField} from 'discord.js';
-import fetch from "node-fetch";
-import dotenv from "dotenv";
-import fs from "fs";
+const fs = require ('fs');
+const dotenv = require ('dotenv');
+const { Client, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
 
 dotenv.config();
 
