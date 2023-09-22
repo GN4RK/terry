@@ -24,7 +24,11 @@ const URLshortenerAPICall = process.env.URL_SHORTENER_API_CALL;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
-    console.log(getNowFormat() + " Terry connected");
+    console.log(JSON.stringify({
+        timestamp: getNowFormat(),
+        level: "info",
+        message: "Terry connected"
+    }));
 });
 
 client.login(discordToken);
@@ -71,12 +75,28 @@ client.on("messageCreate", async function(message) {
         message.channel.send({ embeds: [embed] });
         
         // log message
-        console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} \t ${gameName} \t ${matchSteamLink[0]}`);
+        console.log(JSON.stringify({
+            timestamp: getNowFormat(),
+            level: "info",
+            server: serverName,
+            channel: channelName,
+            author: authorName,
+            message: "Steam link detected",
+            game: gameName,
+            link: matchSteamLink[0]
+        }));
     }
 
     if (matchThanks) {
         if (await reactWithHeart(message)) {
-            console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} thanks the bot`);
+            console.log(JSON.stringify({
+                timestamp: getNowFormat(),
+                level: "info",
+                server: serverName,
+                channel: channelName,
+                author: authorName,
+                message: "User thanked the bot"
+            }));
         }
     }
 
@@ -84,7 +104,14 @@ client.on("messageCreate", async function(message) {
     if (message.stickers.size > 0) {
         if (terrySticker) {
             if (await reactWithHeart(message)) {
-                console.log(`${getNowFormat()} ${serverName} -> ${channelName} -> ${authorName} sent a Terry <3 sticker`);
+                console.log(JSON.stringify({
+                    timestamp: getNowFormat(),
+                    level: "info",
+                    server: serverName,
+                    channel: channelName,
+                    author: authorName,
+                    message: "User sent a Terry <3 sticker"
+                }));
             }
         }
     }
@@ -99,10 +126,13 @@ async function checkBotPermissions(channel, requiredPermissions)
 
     for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
         if (!botPermissions.has(permissionCode)) {
-            console.error(
-                `${getNowFormat()} Bot does not have '${permissionName}' permission on ` +
-                `${channel.guild.name} in ${channel.name}`
-            );
+            console.log(JSON.stringify({
+                timestamp: getNowFormat(),
+                level: "error",
+                server: channel.guild.name,
+                channel: channel.name,
+                message: `Error: Bot does not have '${permissionName}' permission`
+            }));
             return false;
         }
     }
