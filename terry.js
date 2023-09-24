@@ -1,6 +1,7 @@
 const fs = require ('fs');
 const dotenv = require ('dotenv');
 const { Client, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
+const { getJoinLobbyLink } = require ('./steamjoin.js');
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ const client = new Client({
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
+const regexCmdJL = /^!jl\s(?!.*\W)[\w\d]+$/;
 const URLshortenerAPICall = process.env.URL_SHORTENER_API_CALL;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
@@ -45,6 +47,7 @@ client.on("messageCreate", async function(message) {
 
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
+    const matchCmdJL = message.content.match(regexCmdJL);
     const matchThanks = message.content.match(regexThanks);
     const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
@@ -87,6 +90,40 @@ client.on("messageCreate", async function(message) {
         }));
     }
 
+    // if (matchCmdJL) {
+    //     const permissionsNeeded = {
+    //         "SendMessages"  : PermissionsBitField.Flags.SendMessages,
+    //         "EmbedLinks"    : PermissionsBitField.Flags.EmbedLinks
+    //     };
+    //     const profileName = matchCmdJL[0].substring(4);
+    //     const joinLobbyLink = await getJoinLobbyLink(profileName);
+    //     const shortUrl = await shortenUrl(joinLobbyLink);
+    //     const titleEmbed = getTitleEmbled(authorName);
+    //     const embed = new EmbedBuilder()
+    //         .setColor(await getAuthorColor(message))
+    //         .setTitle(titleEmbed)
+    //         .addFields(
+    //             { name : shortUrl, value : joinLobbyLink }
+    //         );
+
+    //     // checking channel's permissions
+    //     if (message.guild) {
+    //         if (!(await checkBotPermissions(message.channel, permissionsNeeded))) {
+    //             return;
+    //         }
+    //     }
+
+    //     message.channel.send({ embeds: [embed] });
+
+    //     // log message
+    //     console.log(JSON.stringify({
+    //         timestamp: getNowFormat(),
+    //         level: "info",
+    //         server: serverName,
+    //         channel: channelName,
+    //     }));
+    // }
+
     if (matchThanks) {
         if (await reactWithHeart(message)) {
             console.log(JSON.stringify({
@@ -126,7 +163,7 @@ async function checkBotPermissions(channel, requiredPermissions)
 
     for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
         if (!botPermissions.has(permissionCode)) {
-            console.log(JSON.stringify({
+            console.error(JSON.stringify({
                 timestamp: getNowFormat(),
                 level: "error",
                 server: channel.guild.name,
