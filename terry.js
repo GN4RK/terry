@@ -255,5 +255,5 @@ function getNowFormat()
     second = ('0' + second).slice(-2);
     // To make sure the second always has 2-character-format
 
-    return `${year}/${month}/${date} ${hour}:${minute}:${second}`;
+    return `${year}-${month}-${date}T${hour}:${minute}:${second}`;
 }
