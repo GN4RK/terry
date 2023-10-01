@@ -2,6 +2,7 @@ const fs = require ('fs');
 const dotenv = require ('dotenv');
 const { Client, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
 const { getJoinLobbyLink } = require ('./steamjoin.js');
+const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbled, reactWithHeart, getNowFormat } = require ('./utils.js');
 
 dotenv.config();
 
@@ -22,7 +23,6 @@ const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
 const regexCmdJL = /^!jl\s(?!.*\W)[\w\d]+$/;
-const URLshortenerAPICall = process.env.URL_SHORTENER_API_CALL;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -70,9 +70,7 @@ client.on("messageCreate", async function(message) {
 
         // checking channel's permissions
         if (message.guild) {
-            if (!(await checkBotPermissions(message.channel, permissionsNeeded))) {
-                return;
-            }
+            if (!(await checkBotPermissions(message.channel, permissionsNeeded))) return;
         }
             
         message.channel.send({ embeds: [embed] });
@@ -139,121 +137,19 @@ client.on("messageCreate", async function(message) {
 
     // react to stickers
     if (message.stickers.size > 0) {
-        if (terrySticker) {
-            if (await reactWithHeart(message)) {
-                console.log(JSON.stringify({
-                    timestamp: getNowFormat(),
-                    level: "info",
-                    server: serverName,
-                    channel: channelName,
-                    author: authorName,
-                    message: "User sent a Terry <3 sticker"
-                }));
-            }
+        if (!terrySticker) return;
+
+        if (await reactWithHeart(message)) {
+            console.log(JSON.stringify({
+                timestamp: getNowFormat(),
+                level: "info",
+                server: serverName,
+                channel: channelName,
+                author: authorName,
+                message: "User sent a Terry <3 sticker"
+            }));
         }
     }
     
 });
 
-async function checkBotPermissions(channel, requiredPermissions)
-{
-    const botMember = await channel.guild.members.fetchMe();
-    const botPermissions = botMember.permissionsIn(channel);
-
-
-    for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
-        if (!botPermissions.has(permissionCode)) {
-            console.error(JSON.stringify({
-                timestamp: getNowFormat(),
-                level: "error",
-                server: channel.guild.name,
-                channel: channel.name,
-                message: `Error: Bot does not have '${permissionName}' permission`
-            }));
-            return false;
-        }
-    }
-    return true;
-}
-
-async function shortenUrl(url)
-{
-    try {
-        const response = await fetch(URLshortenerAPICall + encodeURIComponent(url));
-        const json = await response.json();
-        return await json.shorturl;
-        
-    } catch (error) {
-        console.error('Error:', error);
-        return 'Failed to shorten URL';
-    }
-}
-
-async function getAuthorColor(message)
-{
-    if (message.guild) {
-        const member = await message.guild.members.fetch(message.author);
-        return member.displayColor;
-    }
-    return "Default";
-}
-
-async function getAuthorName(message)
-{
-    if (message.guild) {
-        const member = await message.guild.members.fetch(message.author);
-        return member.displayName;
-    }
-    return message.author.displayName;
-}
-
-function getTitleEmbled(authorName)
-{
-    if (authorName.endsWith('s')) {
-        return `${authorName}' lobby`;
-    }
-    return `${authorName}'s lobby`;
-}
-
-async function reactWithHeart(message)
-{
-    if (message.guild) {
-        // checking bot's permission to add reactions
-        const addReactionsPermission = { "AddReactions": PermissionsBitField.Flags.AddReactions };
-        if (!(await checkBotPermissions(message.channel, addReactionsPermission))) {
-            return false;
-        }
-        await message.react('❤️');
-
-    } else {
-        await message.react('❤️');
-    }
-    return true;
-}
-
-function getNowFormat()
-{
-    const dateObj = new Date();
-    let year = dateObj.getFullYear();
-    let month = dateObj.getMonth();
-    month = ('0' + (month + 1)).slice(-2);
-    // To make sure the month always has 2-character-format. For example, 1 => 01, 2 => 02
-
-    let date = dateObj.getDate();
-    date = ('0' + date).slice(-2);
-    // To make sure the date always has 2-character-format
-
-    let hour = dateObj.getHours();
-    hour = ('0' + hour).slice(-2);
-    // To make sure the hour always has 2-character-format
-
-    let minute = dateObj.getMinutes();
-    minute = ('0' + minute).slice(-2);
-    // To make sure the minute always has 2-character-format
-
-    let second = dateObj.getSeconds();
-    second = ('0' + second).slice(-2);
-    // To make sure the second always has 2-character-format
-
-    return `${year}-${month}-${date}T${hour}:${minute}:${second}`;
-}
