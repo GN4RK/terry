@@ -84,6 +84,7 @@ client.on("messageCreate", async function(message) {
     const serverName = message.guild ? message.guild.name : 'DM';
     const channelName = message.channel.name ? message.channel.name : 'DM';
     const authorName = await getAuthorName(message);
+    const authorTag = message.author.tag;
 
     // preventing infinite loop
     if (message.author.bot) return;
@@ -124,7 +125,7 @@ client.on("messageCreate", async function(message) {
             level: "info",
             server: serverName,
             channel: channelName,
-            author: authorName,
+            author: authorTag,
             message: "Steam link detected",
             game: gameName,
             link: matchSteamLink[0]
@@ -172,7 +173,7 @@ client.on("messageCreate", async function(message) {
                 level: "info",
                 server: serverName,
                 channel: channelName,
-                author: authorName,
+                author: authorTag,
                 message: "User thanked the bot"
             }));
         }
@@ -188,7 +189,7 @@ client.on("messageCreate", async function(message) {
                 level: "info",
                 server: serverName,
                 channel: channelName,
-                author: authorName,
+                author: authorTag,
                 message: "User sent a Terry <3 sticker"
             }));
         }
