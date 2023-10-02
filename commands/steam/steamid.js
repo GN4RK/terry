@@ -33,7 +33,7 @@ module.exports = {
         if (authorTag in steamIdList) {
             if (steamIdList[authorTag] != steamId) {
                 steamIdList[authorTag] = steamId;
-                fs.writeFileSync('steamIDList.json', JSON.stringify(steamIdList));
+                fs.writeFileSync('steamIdList.json', JSON.stringify(steamIdList));
                 await interaction.reply('Steam ID updated for ' + authorTag);
                 // adding log
                 if (!interaction.guild) {
