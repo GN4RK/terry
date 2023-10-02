@@ -2,4 +2,5 @@
 package-lock.json
 node_modules/.package-lock.json
 node_modules/
+steamIdList.json
 terry2.js
