@@ -76,7 +76,7 @@ module.exports = {
 
         // saving the Steam ID in json format
         steamIdList[authorTag] = steamId;
-        fs.writeFileSync('steamIDList.json', JSON.stringify(steamIdList));
+        fs.writeFileSync('steamIdList.json', JSON.stringify(steamIdList));
         await interaction.reply('Steam ID saved for ' + authorTag);
 
         if (!interaction.guild) {
