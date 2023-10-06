@@ -1,11 +1,13 @@
 # Terry
 
-Terry is a Discord bot designed to perform specific actions in response 
-to messages, such as handling Steam lobby links and reacting to thank-you messages.
+Terry is a Discord bot designed to handle Steam lobby links making them clickable and shortening them.
 
 ## Features
 
-- Automatically detects and responds to Steam lobby links with short links.
+- Automatically detects and responds to Steam lobby links with clickable links.
+- Shortens the links using the API of your choice.
+- Can save the steam id for a specific discord user.
+- Can fetch the joinlobby link from the steam profile page of a saved user.
 - Reacts with ❤️ to thank-you messages.
 
 ## Adding Terry to your server
@@ -16,8 +18,8 @@ https://discord.com/api/oauth2/authorize?client_id=746064350456053825&permission
 The bot needs those permissions to work :
 - Read Messages/View Channels
 - Send Messages
-- Embed Links
 - Add Reactions
+- Embed Links
 
 ## Hosting your own version of the bot
 
@@ -44,6 +46,7 @@ shorten the URL (tinyurl in the example):
    ```
    DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN
    URL_SHORTENER_API_CALL='https://tinyurl.com/api-create.php?url='
+   CLIENT_ID=YOUR_APPLICATION_CLIENT_ID
    ```
 
 4. Adapt shortenUrl function in the code to work with the API you call. If you use tinyurl, this code should work:
@@ -62,6 +65,13 @@ shorten the URL (tinyurl in the example):
 5. Run the bot:
    ```bash
    node terry.js
+   ```
+   
+6. Invite the bot to your server using the invite link generated in the Discord Developer Portal.
+
+7. You need to deploy slash commands by running the following command:
+   ```bash
+   node deploy-commands.js
    ```
 
 ### Usage
