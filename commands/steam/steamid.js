@@ -9,25 +9,31 @@ module.exports = {
         .addStringOption(option => 
             option.setName('steamid')
                 .setDescription(
-                    'https://steamcommunity.com/id/test/ -> test; ' +
-                    'https://steamcommunity.com/profiles/1234 -> 1234'
+                    'can be a Steam ID, a Steam profile URL or a Steam custom URL'
                 )
                 .setRequired(true)),
 
     async execute(interaction) {
         
         // fetching infos
-        const steamId = interaction.options.getString('steamid');
+        var steamId = interaction.options.getString('steamid');
         const authorTag = interaction.user.tag;
+        const serverName = interaction.guild ? interaction.guild.name : 'DM';
+        const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         // fetching steamIdList
         const steamIdList = JSON.parse(fs.readFileSync('steamIdList.json'));
 
         // checking if the Steam ID is valid: only letters, numbers and dash are allowed
-        if (!/^[a-zA-Z0-9-]+$/.test(steamId)) {
-            await interaction.reply('Invalid Steam ID!');
+        const regexSteamId = /^(?:https:\/\/steamcommunity\.com\/(?:id|profiles)\/)?([A-Za-z0-9_-]+)\/?$/;
+        const match = steamId.match(regexSteamId);
+        if (!match) {
+            await interaction.reply('Invalid Steam ID! Should be a Steam ID, a Steam profile URL or a Steam custom URL.');
             return;
-        }        
+        }
+
+        // removing the https://steamcommunity.com/id/ part
+        steamId = match[1];
 
         // checking if the Steam ID is already saved
         if (authorTag in steamIdList) {
@@ -35,39 +41,29 @@ module.exports = {
                 steamIdList[authorTag] = steamId;
                 fs.writeFileSync('steamIdList.json', JSON.stringify(steamIdList));
                 await interaction.reply('Steam ID updated for ' + authorTag);
+                
                 // adding log
-                if (!interaction.guild) {
-                    var serverName = 'DM';
-                    var channelName = 'DM';
-                } else {
-                    var serverName = interaction.guild.name;
-                    var channelName = interaction.channel.name;
-                }
-
                 console.log(JSON.stringify({
                     timestamp: getNowFormat(),
                     level: "info",
                     server: serverName,
                     channel: channelName,
+                    author: interaction.user.tag,
                     message: "Steam ID updated"
                 }));
 
             } else {
                 await interaction.reply('Your Steam ID is already saved!');
-                //adding log
-                if (!interaction.guild) {
-                    var serverName = 'DM';
-                    var channelName = 'DM';
-                } else {
-                    var serverName = interaction.guild.name;
-                    var channelName = interaction.channel.name;
-                }
 
+                //adding log
+                const serverName = interaction.guild ? interaction.guild.name : 'DM';
+                const channelName = interaction.channel ? interaction.channel.name : 'DM';
                 console.log(JSON.stringify({
                     timestamp: getNowFormat(),
                     level: "info",
                     server: serverName,
                     channel: channelName,
+                    author: interaction.user.tag,
                     message: "Steam ID already saved"
                 }));
             }
@@ -78,14 +74,6 @@ module.exports = {
         steamIdList[authorTag] = steamId;
         fs.writeFileSync('steamIdList.json', JSON.stringify(steamIdList));
         await interaction.reply('Steam ID saved for ' + authorTag);
-
-        if (!interaction.guild) {
-            var serverName = 'DM';
-            var channelName = 'DM';
-        } else {
-            var serverName = interaction.guild.name;
-            var channelName = interaction.channel.name;
-        }
 
         // adding log
         console.log(JSON.stringify({
