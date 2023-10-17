@@ -2,8 +2,7 @@ const fs = require ('fs');
 const dotenv = require ('dotenv');
 const path = require ('path');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
-const { getJoinLobbyLink } = require ('./steamjoin.js');
-const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbled, reactWithHeart, getNowFormat } = require ('./utils.js');
+const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, getNowFormat } = require ('./utils.js');
 
 dotenv.config();
 
@@ -43,7 +42,6 @@ for (const folder of commandFolders) {
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
-const regexCmdJL = /^!jl\s(?!.*\W)[\w\d]+$/;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -91,7 +89,6 @@ client.on("messageCreate", async function(message) {
 
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
-    const matchCmdJL = message.content.match(regexCmdJL);
     const matchThanks = message.content.match(regexThanks);
     const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
@@ -104,7 +101,7 @@ client.on("messageCreate", async function(message) {
         const gameData = steamAppList.find((data) => data.appid === parseInt(gameID));
         const gameName = gameData ? gameData.name : "404";
         const shortUrl = await shortenUrl(matchSteamLink[0]);
-        const titleEmbed = getTitleEmbled(authorName);
+        const titleEmbed = getTitleEmbed(authorName);
         const embed = new EmbedBuilder()
             .setColor(await getAuthorColor(message))
             .setTitle(titleEmbed)
@@ -131,40 +128,6 @@ client.on("messageCreate", async function(message) {
             link: matchSteamLink[0]
         }));
     }
-
-    // if (matchCmdJL) {
-    //     const permissionsNeeded = {
-    //         "SendMessages"  : PermissionsBitField.Flags.SendMessages,
-    //         "EmbedLinks"    : PermissionsBitField.Flags.EmbedLinks
-    //     };
-    //     const profileName = matchCmdJL[0].substring(4);
-    //     const joinLobbyLink = await getJoinLobbyLink(profileName);
-    //     const shortUrl = await shortenUrl(joinLobbyLink);
-    //     const titleEmbed = getTitleEmbled(authorName);
-    //     const embed = new EmbedBuilder()
-    //         .setColor(await getAuthorColor(message))
-    //         .setTitle(titleEmbed)
-    //         .addFields(
-    //             { name : shortUrl, value : joinLobbyLink }
-    //         );
-
-    //     // checking channel's permissions
-    //     if (message.guild) {
-    //         if (!(await checkBotPermissions(message.channel, permissionsNeeded))) {
-    //             return;
-    //         }
-    //     }
-
-    //     message.channel.send({ embeds: [embed] });
-
-    //     // log message
-    //     console.log(JSON.stringify({
-    //         timestamp: getNowFormat(),
-    //         level: "info",
-    //         server: serverName,
-    //         channel: channelName,
-    //     }));
-    // }
 
     if (matchThanks) {
         if (await reactWithHeart(message)) {
