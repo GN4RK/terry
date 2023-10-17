@@ -18,15 +18,9 @@ module.exports = {
         
         // sending steamjoin.com link to the lobby with the Steam ID
         await interaction.reply('https://steamjoin.com/' + steamIdList[authorTag]);
-        
-        // checking if the interaction is in a server or DM
-        if (!interaction.guild) {
-            var serverName = 'DM';
-            var channelName = 'DM';
-        } else {
-            var serverName = interaction.guild.name;
-            var channelName = interaction.channel.name;
-        }
+
+        const serverName = interaction.guild ? interaction.guild.name : 'DM';
+        const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         // adding log
         console.log(JSON.stringify({
