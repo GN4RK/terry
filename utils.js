@@ -56,7 +56,7 @@ async function getAuthorName(message)
     return message.author.displayName;
 }
 
-function getTitleEmbled(authorName)
+function getTitleEmbed(authorName)
 {
     if (authorName.endsWith('s')) {
         return `${authorName}' lobby`;
@@ -107,4 +107,30 @@ function getNowFormat()
     return `${year}-${month}-${date}T${hour}:${minute}:${second}`;
 }
 
-module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbled, reactWithHeart, getNowFormat };
+function addLog(level, logMessage, serverName = "", channelName = "", authorTag = "", gameName = "", link = "")
+{
+    const data = {
+        timestamp: getNowFormat(),
+        level: level,
+        message: logMessage
+    }
+    if (serverName) {
+        data.server = serverName;
+    }
+    if (channelName) {
+        data.channel = channelName;
+    }
+    if (authorTag) {
+        data.author = authorTag;
+    }
+    if (gameName) {
+        data.game = gameName;
+    }
+    if (link) {
+        data.link = link;
+    }
+
+    console.log(JSON.stringify({data}));
+}
+
+module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed: getTitleEmbed, reactWithHeart, getNowFormat, addLog };
