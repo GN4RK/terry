@@ -10,6 +10,7 @@ module.exports = {
         // Check if the command is being used in a guild
         if (!interaction.guild) {
             await interaction.reply('This command can only be used in a guild.');
+            addLog("warning", "Check permissions failed: not in a guild", "DM", undefined, interaction.user.tag);
             return;
         }
 
@@ -30,7 +31,7 @@ module.exports = {
         for (const [key, value] of Object.entries(permissionsNeeded)) {
             if (!interaction.channel.permissionsFor(interaction.client.user).has(value)) {
                 await interaction.reply(`The bot does not have the '${key}' permission in this channel.`);
-                addLog("error", serverName, channelName, authorTag, `Check permissions failed: ${key}`);
+                addLog("error", `Check permissions failed: ${key}`, serverName, channelName, authorTag);
                 return;
             }
         }
@@ -39,6 +40,6 @@ module.exports = {
         await interaction.reply('The bot has all the required permissions in this channel.');
 
         // adding log
-        addLog("info", serverName, channelName, authorTag, "Check permissions success");
+        addLog("info", "Check permissions success", serverName, channelName, authorTag);
     },
 };

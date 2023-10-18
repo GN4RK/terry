@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { getNowFormat } = require('../../utils');
+const { addLog } = require('../../utils');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,13 +12,6 @@ module.exports = {
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         // adding log
-        console.log(JSON.stringify({
-            timestamp: getNowFormat(),
-            level: "info",
-            server: serverName,
-            channel: channelName,
-            author: interaction.user.tag,
-            message: "Pong!"
-        }));
+        addLog("info", "Pong!", serverName, channelName, interaction.user.tag);
     },
 };
