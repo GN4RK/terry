@@ -12,13 +12,7 @@ async function checkBotPermissions(channel, requiredPermissions)
 
     for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
         if (!botPermissions.has(permissionCode)) {
-            console.error(JSON.stringify({
-                timestamp: getNowFormat(),
-                level: "error",
-                server: channel.guild.name,
-                channel: channel.name,
-                message: `Error: Bot does not have '${permissionName}' permission`
-            }));
+            addLog("error", `Bot does not have '${permissionName}' permission`, channel.guild.name, channel.name);
             return false;
         }
     }
@@ -49,14 +43,20 @@ async function getAuthorColor(message)
 
 async function getAuthorName(message)
 {
-    if (message.guild) {
-        const member = await message.guild.members.fetch(message.author);
-        return member.displayName;
+    try {
+        if (message.guild) {
+            const member = await message.guild.members.fetch(message.author);
+            return member.displayName;
+        }
+        return message.author.displayName;
+
+    } catch (error) {
+        addLog("error", "Failed to get author name");
+        return "error";
     }
-    return message.author.displayName;
 }
 
-function getTitleEmbled(authorName)
+function getTitleEmbed(authorName)
 {
     if (authorName.endsWith('s')) {
         return `${authorName}' lobby`;
@@ -107,4 +107,26 @@ function getNowFormat()
     return `${year}-${month}-${date}T${hour}:${minute}:${second}`;
 }
 
-module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbled, reactWithHeart, getNowFormat };
+function addLog(level, message, server = "", channel = "", author = "", game = "", link = "")
+{
+    infos = {
+        timestamp: getNowFormat(),
+        level: level,
+        message: message
+    };
+
+    if (server) infos.server = server;
+    if (channel) infos.channel = channel;
+    if (author) infos.author = author;
+    if (game) infos.game = game;
+    if (link) infos.link = link;
+
+    if (level == "error") {
+        console.error(JSON.stringify(infos));
+        return;
+    }
+
+    console.log(JSON.stringify(infos));
+}
+
+module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, getNowFormat, addLog };
