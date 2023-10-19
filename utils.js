@@ -109,7 +109,7 @@ function getNowFormat()
 
 function addLog(level, message, server = "", channel = "", author = "", game = "", link = "")
 {
-    infos = {
+    let infos = {
         timestamp: getNowFormat(),
         level: level,
         message: message
