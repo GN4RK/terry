@@ -12,13 +12,7 @@ async function checkBotPermissions(channel, requiredPermissions)
 
     for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
         if (!botPermissions.has(permissionCode)) {
-            console.error(JSON.stringify({
-                timestamp: getNowFormat(),
-                level: "error",
-                server: channel.guild.name,
-                channel: channel.name,
-                message: `Error: Bot does not have '${permissionName}' permission`
-            }));
+            addLog("error", `Bot does not have '${permissionName}' permission`, channel.guild.name, channel.name);
             return false;
         }
     }
@@ -49,11 +43,17 @@ async function getAuthorColor(message)
 
 async function getAuthorName(message)
 {
-    if (message.guild) {
-        const member = await message.guild.members.fetch(message.author);
-        return member.displayName;
+    try {
+        if (message.guild) {
+            const member = await message.guild.members.fetch(message.author);
+            return member.displayName;
+        }
+        return message.author.displayName;
+
+    } catch (error) {
+        addLog("error", "Failed to get author name");
+        return "error";
     }
-    return message.author.displayName;
 }
 
 function getTitleEmbed(authorName)
@@ -107,30 +107,26 @@ function getNowFormat()
     return `${year}-${month}-${date}T${hour}:${minute}:${second}`;
 }
 
-function addLog(level, logMessage, serverName = "", channelName = "", authorTag = "", gameName = "", link = "")
+function addLog(level, message, server = "", channel = "", author = "", game = "", link = "")
 {
-    const data = {
+    infos = {
         timestamp: getNowFormat(),
         level: level,
-        message: logMessage
-    }
-    if (serverName) {
-        data.server = serverName;
-    }
-    if (channelName) {
-        data.channel = channelName;
-    }
-    if (authorTag) {
-        data.author = authorTag;
-    }
-    if (gameName) {
-        data.game = gameName;
-    }
-    if (link) {
-        data.link = link;
+        message: message
+    };
+
+    if (server) infos.server = server;
+    if (channel) infos.channel = channel;
+    if (author) infos.author = author;
+    if (game) infos.game = game;
+    if (link) infos.link = link;
+
+    if (level == "error") {
+        console.error(JSON.stringify(infos));
+        return;
     }
 
-    console.log(JSON.stringify({data}));
+    console.log(JSON.stringify(infos));
 }
 
-module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed: getTitleEmbed, reactWithHeart, getNowFormat, addLog };
+module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, getNowFormat, addLog };

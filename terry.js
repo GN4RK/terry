@@ -2,7 +2,7 @@ const fs = require ('fs');
 const dotenv = require ('dotenv');
 const path = require ('path');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
-const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, getNowFormat } = require ('./utils.js');
+const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, addLog } = require ('./utils.js');
 
 dotenv.config();
 
@@ -45,11 +45,7 @@ const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
-    console.log(JSON.stringify({
-        timestamp: getNowFormat(),
-        level: "info",
-        message: "Terry connected"
-    }));
+    addLog("info", "Terry connected");
 });
 
 client.login(discordToken);
@@ -115,30 +111,12 @@ client.on("messageCreate", async function(message) {
         }
             
         message.channel.send({ embeds: [embed] });
-        
-        // log message
-        console.log(JSON.stringify({
-            timestamp: getNowFormat(),
-            level: "info",
-            server: serverName,
-            channel: channelName,
-            author: authorTag,
-            message: "Steam link detected",
-            game: gameName,
-            link: matchSteamLink[0]
-        }));
+        addLog("info", "Steam link detected", serverName, channelName, authorTag, gameName, matchSteamLink[0]);
     }
 
     if (matchThanks) {
         if (await reactWithHeart(message)) {
-            console.log(JSON.stringify({
-                timestamp: getNowFormat(),
-                level: "info",
-                server: serverName,
-                channel: channelName,
-                author: authorTag,
-                message: "User thanked the bot"
-            }));
+            addLog("info", "Thanks detected", serverName, channelName, authorTag);
         }
     }
 
@@ -147,14 +125,7 @@ client.on("messageCreate", async function(message) {
         if (!terrySticker) return;
 
         if (await reactWithHeart(message)) {
-            console.log(JSON.stringify({
-                timestamp: getNowFormat(),
-                level: "info",
-                server: serverName,
-                channel: channelName,
-                author: authorTag,
-                message: "User sent a Terry <3 sticker"
-            }));
+            addLog("info", "Terry <3 sticker detected", serverName, channelName, authorTag);
         }
     }
     
