@@ -51,7 +51,7 @@ async function getAuthorName(message)
         return message.author.displayName;
 
     } catch (error) {
-        addLog("error", "Failed to get author name");
+        addLog("error", "Failed to get author name", message.guild.name, message.channel.name);
         return "error";
     }
 }
