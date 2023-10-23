@@ -66,16 +66,26 @@ function getTitleEmbed(authorName)
 
 async function reactWithHeart(message)
 {
+    return await reactWithEmoji(message, '❤️');
+}
+
+async function reactWithBrokenHeart(message)
+{
+    return await reactWithEmoji(message, '💔');
+}
+
+async function reactWithEmoji(message, emoji)
+{
     if (message.guild) {
         // checking bot's permission to add reactions
         const addReactionsPermission = { "AddReactions": PermissionsBitField.Flags.AddReactions };
         if (!(await checkBotPermissions(message.channel, addReactionsPermission))) {
             return false;
         }
-        await message.react('❤️');
+        await message.react(emoji);
 
     } else {
-        await message.react('❤️');
+        await message.react(emoji);
     }
     return true;
 }
@@ -129,4 +139,4 @@ function addLog(level, message, server = "", channel = "", author = "", game = "
     console.log(JSON.stringify(infos));
 }
 
-module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, getNowFormat, addLog };
+module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, addLog };
