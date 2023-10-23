@@ -2,7 +2,7 @@ const fs = require ('fs');
 const dotenv = require ('dotenv');
 const path = require ('path');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
-const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, addLog } = require ('./utils.js');
+const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, addLog } = require ('./utils.js');
 
 dotenv.config();
 
@@ -34,7 +34,7 @@ for (const folder of commandFolders) {
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
 		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            addLog("warning", `The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
 }
@@ -42,6 +42,7 @@ for (const folder of commandFolders) {
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
+const regexFuck = /\b(fuck\syou)\b.*\b(?:Terry|Bogard)\b/i;
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -50,20 +51,21 @@ client.on("ready", function () {
 
 client.login(discordToken);
 
+// Slash commands
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = interaction.client.commands.get(interaction.commandName);
 
 	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
+        addLog("error", `No command matching ${interaction.commandName} was found.`)
 		return;
 	}
 
 	try {
 		await command.execute(interaction);
 	} catch (error) {
-		console.error(error);
+        addLog("error", error);
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
 		} else {
@@ -72,7 +74,11 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+// All other interactions
 client.on("messageCreate", async function(message) {
+
+    // preventing infinite loop
+    if (message.author.bot) return;
 
     // fetching infos
     const serverName = message.guild ? message.guild.name : 'DM';
@@ -80,12 +86,10 @@ client.on("messageCreate", async function(message) {
     const authorName = await getAuthorName(message);
     const authorTag = message.author.tag;
 
-    // preventing infinite loop
-    if (message.author.bot) return;
-
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
     const matchThanks = message.content.match(regexThanks);
+    const matchFuck = message.content.match(regexFuck);
     const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
     if (matchSteamLink) {
@@ -117,6 +121,12 @@ client.on("messageCreate", async function(message) {
     if (matchThanks) {
         if (await reactWithHeart(message)) {
             addLog("info", "Thanks detected", serverName, channelName, authorTag);
+        }
+    }
+
+    if (matchFuck) {
+        if (await reactWithBrokenHeart(message)) {
+            addLog("info", "Hate detected", serverName, channelName, authorTag);
         }
     }
 
