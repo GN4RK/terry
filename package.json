@@ -1,6 +1,6 @@
 {
   "name": "terry",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "discord bot for joinlobby link with steam",
   "main": "terry.js",
   "scripts": {
@@ -11,7 +11,8 @@
   "dependencies": {
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
-    "jsdom": "^22.1.0"
+    "jsdom": "^22.1.0",
+    "sentiment": "^5.0.2"
   },
   "type": "commonjs"
 }
