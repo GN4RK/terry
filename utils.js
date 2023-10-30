@@ -139,4 +139,4 @@ function addLog(level, message, server = "", channel = "", author = "", game = "
     console.log(JSON.stringify(infos));
 }
 
-module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, addLog };
+module.exports = { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, reactWithEmoji, addLog };

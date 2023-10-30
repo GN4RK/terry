@@ -1,6 +1,7 @@
 const fs = require ('fs');
 const dotenv = require ('dotenv');
 const path = require ('path');
+const Sentiment = require ('sentiment');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
 const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, addLog } = require ('./utils.js');
 
@@ -41,8 +42,8 @@ for (const folder of commandFolders) {
 
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
-const regexThanks = /\b(?:thanks?|thank\syou|ty|tysm|thx)\b.*\b(?:Terry|Bogard)\b/i;
-const regexFuck = /\b(fuck\syou)\b.*\b(?:Terry|Bogard)\b/i;
+const regexSpeakingToTerry = /\b(?:terry|bogard)\b/i;
+
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
 client.on("ready", function () {
@@ -88,8 +89,7 @@ client.on("messageCreate", async function(message) {
 
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
-    const matchThanks = message.content.match(regexThanks);
-    const matchFuck = message.content.match(regexFuck);
+    const matchSpeakingToTerry = message.content.match(regexSpeakingToTerry);
     const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
     if (matchSteamLink) {
@@ -118,15 +118,24 @@ client.on("messageCreate", async function(message) {
         addLog("info", "Steam link detected", serverName, channelName, authorTag, gameName, matchSteamLink[0]);
     }
 
-    if (matchThanks) {
-        if (await reactWithHeart(message)) {
-            addLog("info", "Thanks detected", serverName, channelName, authorTag);
-        }
-    }
+    if (matchSpeakingToTerry) {
 
-    if (matchFuck) {
-        if (await reactWithBrokenHeart(message)) {
-            addLog("info", "Hate detected", serverName, channelName, authorTag);
+        // creating sentiment analyzer
+        const sentiment = new Sentiment();
+        const result = sentiment.analyze(message.content);
+
+        if (result.comparative > 0.2) {
+            if (await reactWithHeart(message)) {
+                addLog("info", "Positive message detected", serverName, channelName, authorTag);
+                return;
+            }
+        }
+
+        if (result.comparative < -0.2) {
+            if (await reactWithBrokenHeart(message)) {
+                addLog("info", "Negative message detected", serverName, channelName, authorTag);
+                return;
+            }
         }
     }
 
