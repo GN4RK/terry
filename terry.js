@@ -2,8 +2,13 @@ const fs = require ('fs');
 const dotenv = require ('dotenv');
 const path = require ('path');
 const Sentiment = require ('sentiment');
-const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField } = require ('discord.js');
-const { checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed, reactWithHeart, reactWithBrokenHeart, addLog } = require ('./utils.js');
+const {
+    Client, Collection, Events, GatewayIntentBits, EmbedBuilder, Partials, PermissionsBitField
+} = require ('discord.js');
+const {
+    checkBotPermissions, shortenUrl, getAuthorColor, getAuthorName, getTitleEmbed,
+    reactWithHeart, reactWithBrokenHeart, reactWithEmoji, addLog
+} = require ('./utils.js');
 
 dotenv.config();
 
@@ -43,6 +48,15 @@ for (const folder of commandFolders) {
 const discordToken = process.env.DISCORD_TOKEN;
 const regexSteamLink = /steam:\/\/joinlobby\/(\d+)\/\d+\/\d+/;
 const regexSpeakingToTerry = /\b(?:terry|bogard)\b/i;
+const regexAskingToTerry = /\b(?:terry|bogard)\b.*\?$/i;
+
+// list of emojis that can be used as response
+const emojiList = [
+    '🎱', '👍', '👎', '🤔', '🫡', '👌',
+    '✅', '🛑', '✨', '🎉', '😄', '😕',
+    '😮', '😍', '😎', '😱', '😐', '🫤',
+    '😑', '🤐', '🤐', '🙊', '🤫', '💩'
+];
 
 const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
 
@@ -90,6 +104,7 @@ client.on("messageCreate", async function(message) {
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
     const matchSpeakingToTerry = message.content.match(regexSpeakingToTerry);
+    const matchAskingToTerry = message.content.match(regexAskingToTerry);
     const terrySticker = message.stickers.find(sticker => sticker.name === "Terry <3");
 
     if (matchSteamLink) {
@@ -116,6 +131,15 @@ client.on("messageCreate", async function(message) {
             
         message.channel.send({ embeds: [embed] });
         addLog("info", "Steam link detected", serverName, channelName, authorTag, gameName, matchSteamLink[0]);
+    }
+
+    if (matchAskingToTerry) {
+        // react with a random emoji
+        const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+        await reactWithEmoji(message, randomEmoji);
+        addLog("info", "Question detected", serverName, channelName, authorTag);
+
+        return;
     }
 
     if (matchSpeakingToTerry) {
