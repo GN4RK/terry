@@ -8,7 +8,8 @@ Terry is a Discord bot designed to handle Steam lobby links making them clickabl
 - Shortens the links using the API of your choice.
 - Can save the steam id for a specific discord user, using the command `/steamid`.
 - Can fetch the joinlobby link from the steam profile page of a saved user, using the command `/lobby`.
-- Reacts with ❤️ to thank-you messages.
+- Reacts to positive and negative messages containing the word "Terry" with an emoji.
+- Reacts to messages beginning with "Terry" and ending with "?" with a random emoji.
 
 ## Adding Terry to your server
 
