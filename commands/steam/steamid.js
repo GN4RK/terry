@@ -18,7 +18,7 @@ module.exports = {
         // fetching infos
         var steamId = interaction.options.getString('steamid');
         const authorTag = interaction.user.tag;
-        const serverName = interaction.guild ? interaction.guild.name : 'DM';
+        const serverName = interaction.guild ? interaction.guild.id + ":" + interaction.guild.name : 'DM';
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         // fetching steamIdList

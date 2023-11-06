@@ -27,7 +27,7 @@ module.exports = {
             ephemeral: true
         });
 
-        const serverName = interaction.guild ? interaction.guild.name : 'DM';
+        const serverName = interaction.guild ? interaction.guild.id + ":" + interaction.guild.name : 'DM';
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         addLog("info", "Help command", serverName, channelName, interaction.user.tag);

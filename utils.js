@@ -12,7 +12,7 @@ async function checkBotPermissions(channel, requiredPermissions)
 
     for (const [permissionName, permissionCode] of Object.entries(requiredPermissions)) {
         if (!botPermissions.has(permissionCode)) {
-            addLog("error", `Bot does not have '${permissionName}' permission`, channel.guild.name, channel.name);
+            addLog("error", `Bot does not have '${permissionName}' permission`, channel.guild.id + ":" + channel.guild.name, channel.name);
             return false;
         }
     }
@@ -51,7 +51,7 @@ async function getAuthorName(message)
         return message.author.displayName;
 
     } catch (error) {
-        addLog("error", "Failed to get author name", message.guild.name, message.channel.name);
+        addLog("error", "Failed to get author name", message.guild.id + ":" + message.guild.name, message.channel.name);
         return "error";
     }
 }

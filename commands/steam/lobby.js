@@ -8,7 +8,7 @@ module.exports = {
         .setDescription('Send link to the lobby if available'),
     async execute(interaction) {
 
-        const serverName = interaction.guild ? interaction.guild.name : 'DM';
+        const serverName = interaction.guild ? interaction.guild.id + ":" + interaction.guild.name : 'DM';
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
         
         // checking if the user is in the steamIdList
