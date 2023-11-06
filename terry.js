@@ -146,7 +146,19 @@ client.on("messageCreate", async function(message) {
 
         // creating sentiment analyzer
         const sentiment = new Sentiment();
-        const result = sentiment.analyze(message.content);
+        const options = {
+            extras: {
+                'ty': 1,
+                'thx': 1,
+                'tysm': 1,
+                'tyvm': 1,
+                'tyty': 1,
+                'fnx': 1,
+                'tyia': 1,
+                'tysvm': 1
+            }
+        }
+        const result = sentiment.analyze(message.content, options);
 
         if (result.comparative > 0.2) {
             if (await reactWithHeart(message)) {
