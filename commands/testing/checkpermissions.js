@@ -15,7 +15,7 @@ module.exports = {
         }
 
         // fetching infos
-        const serverName = interaction.guild.name;
+        const serverName = interaction.guild.id + ":" + interaction.guild.name;
         const channelName = interaction.channel.name;
         const authorTag = interaction.user.tag;
 

@@ -96,7 +96,7 @@ client.on("messageCreate", async function(message) {
     if (message.author.bot) return;
 
     // fetching infos
-    const serverName = message.guild ? message.guild.name : 'DM';
+    const serverName = message.guild ? message.guild.id + ":" + message.guild.name : 'DM';
     const channelName = message.channel.name ? message.channel.name : 'DM';
     const authorName = await getAuthorName(message);
     const authorTag = message.author.tag;
