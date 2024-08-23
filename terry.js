@@ -17,11 +17,14 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.DirectMessageReactions
     ],
     partials: [
         Partials.Channel,
-        Partials.Message
+        Partials.Message,
+        Partials.Reaction
     ] 
 });
 
@@ -91,11 +94,45 @@ client.on(Events.InteractionCreate, async interaction => {
     } catch (error) {
         addLog("error", error);
         if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.followUp({ content: 'Error', ephemeral: true });
         } else {
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            await interaction.reply({ content: 'Error', ephemeral: true });
         }
     }
+});
+
+// Emoji Reaction, delete if ❌ is added to the bot message
+client.on(Events.MessageReactionAdd, async function(reaction, user) {
+    
+    // preventing null id caused by uncached messages
+    if (!reaction.message.author) return;
+
+    // listening only messages from the bot itself
+    if (reaction.message.author.id !== client.user.id) return;
+
+    // check if the reaction is the ❌ emoji
+    if (reaction.emoji.name !== '❌') return;
+
+    // check if the message title contain the name of the user who reacted
+    const messageTitle = reaction.message.embeds[0].title;
+    
+    let authorName = user.displayName;
+    if (reaction.message.guild) {
+        const member = await reaction.message.guild.members.fetch(user);
+        authorName = member.displayName;
+    }
+
+    if (!messageTitle.includes(authorName)) return;
+
+    // fetching infos
+    const serverName = reaction.message.guild ? reaction.message.guild.id + ":" + reaction.message.guild.name : 'DM';
+    const channelName = reaction.message.channel.name ? reaction.message.channel.name : 'DM';
+    const authorTag = user.tag;
+
+    // delete the message
+    reaction.message.delete();
+    addLog("info", "Message deleted", serverName, channelName, authorTag);
+
 });
 
 // All other interactions
