@@ -61,7 +61,16 @@ const emojiList = [
     '😑', '🤐', '🤐', '🙊', '🤫', '💩'
 ];
 
-const steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
+// empty list
+let steamAppList = JSON.parse('[]');
+
+// Opening file with the list of Steam games
+try {
+    steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
+
+} catch (error) {
+    addLog("error", "Failed to load the Steam app list", error);
+}
 
 client.on("ready", function () {
     addLog("info", "Terry connected");
