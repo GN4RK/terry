@@ -66,7 +66,7 @@ let steamAppList = JSON.parse('[]');
 
 // Opening file with the list of Steam games
 try {
-    steamAppList = JSON.parse(fs.readFileSync('steamAppList.json'));
+    steamAppList = JSON.parse(fs.readFileSync('steamAppList.json', 'utf8'));
 
 } catch (error) {
     addLog("error", "Failed to load the Steam app list", error);
