@@ -12,7 +12,7 @@ module.exports = {
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
         
         // checking if the user is in the steamIdList
-        const steamIdList = JSON.parse(fs.readFileSync('steamIdList.json'));
+        const steamIdList = JSON.parse(fs.readFileSync('steamIdList.json', 'utf8'));
         const authorTag = interaction.user.tag;
         if (!(authorTag in steamIdList)) {
             await interaction.reply('You need to save your Steam ID first! Use /steamid to do so.');

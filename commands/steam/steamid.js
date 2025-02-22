@@ -22,7 +22,7 @@ module.exports = {
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
 
         // fetching steamIdList
-        const steamIdList = JSON.parse(fs.readFileSync('steamIdList.json'));
+        const steamIdList = JSON.parse(fs.readFileSync('steamIdList.json', 'utf8'));
 
         // checking if the Steam ID is valid: only letters, numbers and dash are allowed
         const regexSteamId = /^(?:https:\/\/steamcommunity\.com\/(?:id|profiles)\/)?([A-Za-z0-9_-]+)\/?$/;
@@ -38,7 +38,7 @@ module.exports = {
 
         // checking if the Steam ID is already saved
         if (authorTag in steamIdList) {
-            if (steamIdList[authorTag] != steamId) {
+            if (steamIdList[authorTag] !== steamId) {
                 steamIdList[authorTag] = steamId;
                 fs.writeFileSync('steamIdList.json', JSON.stringify(steamIdList));
                 await interaction.reply('Steam ID updated for ' + authorTag);
