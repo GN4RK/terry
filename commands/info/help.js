@@ -17,6 +17,7 @@ module.exports = {
                     "• `/ping` - Replies with pong!\n" +
                     "• `/steamid` - Save your Steam ID to Terry\'s brain\n" +
                     "• `/lobby` - Send link to the lobby if available\n" +
+                    "• `/custom` - Create a custom short link\n" +
 
                     "\n\n" +
 
