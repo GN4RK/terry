@@ -1,5 +1,5 @@
 // Description: This file contains some functions that are used in other files.
-const { PermissionsBitField } = require('discord.js');
+const { PermissionsBitField, RESTJSONErrorCodes } = require('discord.js');
 const dotenv = require ('dotenv');
 dotenv.config();
 
@@ -82,10 +82,21 @@ async function reactWithEmoji(message, emoji)
         if (!(await checkBotPermissions(message.channel, addReactionsPermission))) {
             return false;
         }
-        await message.react(emoji);
+    }
 
-    } else {
+    try {
         await message.react(emoji);
+    } catch (error) {
+        const serverName = message.guild ? message.guild.id + ":" + message.guild.name : 'DM';
+        const channelName = message.channel.name ? message.channel.name : 'DM';
+
+        // the author has blocked the bot
+        if (error.code === RESTJSONErrorCodes.ReactionWasBlocked) {
+            addLog("warning", "Reaction blocked by the author", serverName, channelName, message.author.tag);
+        } else {
+            addLog("error", "Failed to react: " + error.message, serverName, channelName, message.author.tag);
+        }
+        return false;
     }
     return true;
 }
