@@ -25,7 +25,15 @@ module.exports = {
         const serverName = interaction.guild ? interaction.guild.id + ":" + interaction.guild.name : 'DM';
         const channelName = interaction.channel ? interaction.channel.name : 'DM';
         const matchSteamLink = url.match(regexSteamLink);
-        let steamAppList = JSON.parse('[]');
+
+        // url must be a steam link
+        if (!matchSteamLink) {
+            await interaction.reply('Invalid URL! Should be a Steam link.');
+            addLog("warning", "Custom short link not created: invalid URL", serverName, channelName, authorTag);
+            return;
+        }
+
+        let steamAppList = [];
         try {
             steamAppList = JSON.parse(fs.readFileSync('steamAppList.json', 'utf8'));
         } catch (error) {
@@ -35,15 +43,8 @@ module.exports = {
         const gameData = steamAppList.find((data) => data.appid === parseInt(gameID));
         const gameName = gameData ? gameData.name : "404";
 
-        // url must be a steam link
-        if (!matchSteamLink) {
-            await interaction.reply('Invalid URL! Should be a Steam link.');
-            addLog("warning", "Custom short link not created: invalid URL", serverName, channelName, authorTag);
-            return;
-        }
-
         try {
-            const fullURL = URLshortenerAPICall + encodeURIComponent(url) + '&keyword=' + keyword;
+            const fullURL = URLshortenerAPICall + encodeURIComponent(url) + '&keyword=' + encodeURIComponent(keyword);
             const response = await fetch(fullURL);
             const json = await response.json();
 
