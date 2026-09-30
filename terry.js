@@ -58,7 +58,7 @@ const emojiList = [
     '🎱', '👍', '👎', '🤔', '🫡', '👌',
     '✅', '🛑', '✨', '🎉', '😄', '😕',
     '😮', '😍', '😎', '😱', '😐', '🫤',
-    '😑', '🤐', '🤐', '🙊', '🤫', '💩'
+    '😑', '🤐', '😁', '🙊', '🤫', '💩'
 ];
 
 // empty list
@@ -72,7 +72,7 @@ try {
     addLog("error", "Failed to load the Steam app list", error);
 }
 
-client.on("ready", function () {
+client.on("clientReady", function () {
     addLog("info", "Terry connected");
 });
 
@@ -146,6 +146,13 @@ client.on("messageCreate", async function(message) {
     const channelName = message.channel.name ? message.channel.name : 'DM';
     const authorName = await getAuthorName(message);
     const authorTag = message.author.tag;
+
+    // if user tag is blacklisted -> abort
+    const blacklist = JSON.parse(fs.readFileSync('blacklist.json', 'utf8'));
+    
+    if (blacklist['blacklist'].includes(authorTag)) {
+        return;
+    }
 
     // checking message content
     const matchSteamLink = message.content.match(regexSteamLink);
