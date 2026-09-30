@@ -1,26 +1,146 @@
 [
    {
-      "appid":245170,
-      "name":"Skullgirls"
+      "appid": 245170,
+      "name": "Skullgirls"
    },
    {
-      "appid":383980,
-      "name":"Rivals of Aether"
+      "appid": 383980,
+      "name": "Rivals of Aether"
    },
    {
-      "appid":520440,
-      "name":"GUILTY GEAR Xrd REV 2"
+      "appid": 520440,
+      "name": "GUILTY GEAR Xrd REV 2"
    },
    {
-      "appid":348550,
-      "name":"GUILTY GEAR XX ACCENT CORE PLUS R"
+      "appid": 348550,
+      "name": "GUILTY GEAR XX ACCENT CORE PLUS R"
    },
    {
-      "appid":236110,
-      "name":"Dungeon Defenders II"
+      "appid": 236110,
+      "name": "Dungeon Defenders II"
    },
    {
-      "appid":586140,
-      "name":"BlazBlue Centralfiction"
+      "appid": 586140,
+      "name": "BlazBlue Centralfiction"
+   },
+   {
+      "appid": 1778820,
+      "name": "TEKKEN 8"
+   },
+   {
+      "appid": 574980,
+      "name": "Them's Fightin' Herds"
+   },
+   {
+      "appid": 1602010,
+      "name": "Persona 4 Arena Ultimax"
+   },
+   {
+      "appid": 357190,
+      "name": "ULTIMATE MARVEL VS. CAPCOM 3"
+   },
+   {
+      "appid": 553310,
+      "name": "Lethal League Blaze"
+   },
+   {
+      "appid": 389730,
+      "name": "TEKKEN 7"
+   },
+   {
+      "appid": 2076010,
+      "name": "UNDER NIGHT IN-BIRTH II Sys:Celes"
+   },
+   {
+      "appid": 2212330,
+      "name": "Your Only Move Is HUSTLE"
+   },
+   {
+      "appid": 2132850,
+      "name": "Rabbit and Steel"
+   },
+   {
+      "appid": 70,
+      "name": "Half-Life"
+   },
+   {
+      "appid": 2935730,
+      "name": "Rivals 2"
+   },
+   {
+      "appid": 702890,
+      "name": "BlazBlue: Cross Tag Battle"
+   },
+   {
+      "appid": 3527290,
+      "name": "PEAK"
+   },
+   {
+      "appid": 457601,
+      "name": "Ultra Street Fighter IV"
+   },
+   {
+      "appid": 286160,
+      "name": "Tabletop Simulator"
+   },
+   {
+      "appid": 2217000,
+      "name": "Rivals 2"
+   },
+   {
+      "appid": 222440,
+      "name": "THE_KING_OF_FIGHTERS_2002_UNLIMITED_MATCH"
+   },
+   {
+      "appid": 45760,
+      "name": "Ultra Street Fighter IV"
+   },
+   {
+      "appid": 661990,
+      "name": "Arcana Heart 3 LOVEMAX SIXSTARS!!!!!! XTEND"
+   },
+   {
+      "appid": 2492040,
+      "name": "FATAL FURY: City of the Wolves"
+   },
+   {
+      "appid": 801630,
+      "name": "UNDER NIGHT IN-BIRTH Exe:Late[cl-r]"
+   },
+   {
+      "appid": 3805420,
+      "name": "A Few Quick Matches"
+   },
+   {
+      "appid": 1498570,
+      "name": "THE KING OF FIGHTERS XV"
+   },
+   {
+      "appid": 3949040,
+      "name": "RV There Yet?"
+   },
+   {
+      "appid": 3050220,
+      "name": "THE KING OF FIGHTERS XIII GLOBAL MATCH"
+   },
+   {
+      "appid": 2956680,
+      "name": "LORT"
+   },
+   {
+      "appid": 2868840,
+      "name": "Slay the Spire 2"
+   },
+   {
+      "appid": 1372280,
+      "name": "MELTY BLOOD: TYPE LUMINA"
+   },
+   {
+      "appid": 3892270,
+      "name": "Gamble With Your Friends"
+   },
+   {
+      "appid": 1342260,
+      "name": "SAMURAI SHODOWN"
    }
 ]
