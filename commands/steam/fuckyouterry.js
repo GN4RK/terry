@@ -5,7 +5,7 @@ const fs = require('node:fs');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('fuckyouterry')
-        .setDescription("Adds you in the Terry's blacklist to never have your steamlink converted by it"),
+        .setDescription("Adds you in Terry's blacklist to never have your steamlink converted by it"),
 
     async execute(interaction) {
         

@@ -5,7 +5,7 @@ const fs = require('node:fs');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('loveyouterry')
-        .setDescription("Removes you in the Terry's blacklist"),
+        .setDescription("Removes you from Terry's blacklist"),
 
     async execute(interaction) {
         
