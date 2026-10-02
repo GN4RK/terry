@@ -6,10 +6,16 @@ Terry is a Discord bot designed to handle Steam lobby links making them clickabl
 
 - Automatically detects and responds to Steam lobby links with clickable links.
 - Shortens the links using the API of your choice.
-- Can save the steam id for a specific discord user, using the command `/steamid`.
-- Can fetch the joinlobby link from the steam profile page of a saved user, using the command `/lobby`.
 - Reacts to positive and negative messages containing the word "Terry" with an emoji.
 - Reacts to messages beginning with "Terry" and ending with "?" with a random emoji.
+- `/help` gives infos and command list
+- `/ping` replies with pong.
+- `/checkpermissions` checks if the bot has all the required permissions in the current channel.
+- `/steamid` saves the steam id for a specific discord user.
+- `/lobby` fetches the joinlobby link from the steam profile page of a saved user.
+- `/custom` creates a custom short link.
+- `/fuckyouterry` adds the user in Terry's blacklist to never interact with it.
+- `/loveyouterry` removes the user from Terry's blacklist
 
 ## Adding Terry to your server
 
@@ -38,7 +44,7 @@ The bot needs those permissions to work :
    cd terry
    ```
 2. Install dependencies:
-    ```bash
+   ```bash
    npm install
    ```
    
@@ -50,7 +56,12 @@ shorten the URL (tinyurl in the example):
    CLIENT_ID=YOUR_APPLICATION_CLIENT_ID
    ```
 
-4. Adapt shortenUrl function in the code to work with the API you call. If you use tinyurl, this code should work:
+4. Create an empty blacklist.json file with this json structure
+   ```JSON
+   {"blacklist":[]}
+   ```
+
+5. Adapt shortenUrl function in the code to work with the API you call. If you use tinyurl, this code should work:
    ```JS
       async function shortenUrl(url) {
          try {
@@ -63,14 +74,14 @@ shorten the URL (tinyurl in the example):
       }
    ```
 
-5. Run the bot:
+6. Run the bot:
    ```bash
    node terry.js
    ```
    
-6. Invite the bot to your server using the invite link generated in the Discord Developer Portal.
+7. Invite the bot to your server using the invite link generated in the Discord Developer Portal.
 
-7. You need to deploy slash commands by running the following command:
+8. You need to deploy slash commands by running the following command:
    ```bash
    node deploy-commands.js
    ```
